@@ -1,0 +1,67 @@
+id del filosofo che muore non viene passato correettamente alla stampa in routine
+exit e free
+_______________________________________________________________________
+CHECKLIST!!!
+!!!!! 1 800 200 200 | non mangia, muore
+5 800 200 200 |nessuno muore
+5 800 200 200 |7 nesusno muore e mangiano 7 volte
+4 410 200 200 |nessuno muore
+!!!!!! 4 310 200 100 |un filosofo muore
+testa con due filosofi
+
+
+non più di 200 filosofi
+
+
+_______________________________________________________________________
+
+far scorrere la routine su tutti i filosofi
+// riscrivere la funzione usleep
+gestire l''imput [number_of_times_each_philo_must_eat]
+
+controllo morte
+aggiornare tempi del singolo filosofo
+
+controlli vari
+
+
+_______________________________________________________________________
+
+./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [number_of_times_each_philo_must_eat]
+
+_______________________________________________________________________
+!!!serve a creare thread da altri thread
+int pthread_create(pthread_t *restrict thread, const pthread_attr_t *restrict attr, void *(*start_routine)(void *), void *restrict arg);
+	descrizione
+	|| ID del nuovo thread || 
+	||ttributo da cambiare nel nuovo thread (NULL)|| 
+	||funzione dove ha tutte le istruzioni di esecuzione prototipo;  void *function_name(void *arg); \\ 
+	||puntatore da passare alla start-routine fun.
+	-> 0 tutto ok, altrimenti error code
+
+
+!!!per bloccare -esecuzione di un thred fin quando un altro finisce)
+int pthread_join(pthread_t thread, void **retval);
+	|| ID del thread di cui si deve aspettare lésecuzione
+	|| variabile punttore che ha il ritorno della routine del thread
+	-> 0 tutto ok, altrimenti errore
+
+!!!per rendere disponibili subito tutte le sue risorse
+int pthread_detach(pthread_t thread);
+
+memoria condivisa -> problemi di sincronizzazione ++ Data Races, stessa area di memoria allo stesso tempo
+con i mutex risolviamo questo problema
+
+pthread_mutex_t	mutex;
+
+int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *mutexattr);
+	||puntatore al pthread_mutex_t	mutex da inizializzare
+	||attributo del mutex
+	-> 0 sempre
+
+int pthread_mutex_lock(pthread_mutex_t *mutex));
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+!!!lock order violation” errors
+
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+distrugge UNLOCKED mutex liberando le risorse
