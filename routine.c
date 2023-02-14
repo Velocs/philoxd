@@ -6,7 +6,7 @@
 /*   By: aliburdi <aliburdi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 13:19:23 by aliburdi          #+#    #+#             */
-/*   Updated: 2023/02/14 18:07:29 by aliburdi         ###   ########.fr       */
+/*   Updated: 2023/02/14 19:45:06 by aliburdi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	xsleep(int id, t_everyone *t)
 
 int	ft_check_death(t_one *o)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	// while (o->t->philo[i])
@@ -80,7 +80,8 @@ int	ft_check_death(t_one *o)
 
 		// printf(" time death, %lld, %lld, %ld\n", get_time(), o->time_last_meal, o->t->time_to_die);
 		// usleep(10);
-		if (get_time() - o->t->start >= (o->time_last_meal  - o->t->start) + o->t->time_to_die)
+		//get_time() - o->time_last_meal >= o->t->time_to_die
+		if (get_time() - o->time_last_meal >= o->t->time_to_die)
 		{
 			// printf(" time death, %lld, %lld, %ld\n", get_time() - o->t->start, o->time_last_meal  - o->t->start, o->t->time_to_die);
 			o->t->end = 1;
@@ -89,7 +90,7 @@ int	ft_check_death(t_one *o)
 		}
 	// 	i++;
 	// }
-	return(0);
+	return (0);
 }
 
 void	init_philo(t_everyone *t)
@@ -115,8 +116,6 @@ void	change_state(t_one *o)
 {
 	if (!ft_check_death(o))
 	{
-		// if (o->id == 0)
-			// printf("%d\n", o->philo_status);
 		if (o->philo_status == 0)
 		{
 			if (o->t->forchette[o->id] == 0 && o->t->forchette[o->id + 1 % o->t->num_philo] == 0)
@@ -127,14 +126,11 @@ void	change_state(t_one *o)
 				pthread_mutex_lock(&o->t->forks[o->id + 1 % o->t->num_philo]);
 				o->t->forchette[(o->id + 1) % o->t->num_philo] = 1;
 				ft_write(o->id, o->t, "has taken a fork");
-				o->philo_status = 2;
-				printf("philo %d, status %d\n", o->id, o->philo_status);
+				ft_write(o->id, o->t, "is eating");
+				o->philo_status = 3;
+				o->time_last_meal = get_time();
+				//printf("philo %d, status %d\n", o->id, o->philo_status);
 			}
-		}
-		else if (o->philo_status == 2)
-		{
-			ft_write(o->id, o->t, "is eating");
-			o->philo_status = 3;
 		}
 		else if (o->philo_status == 3 && get_time() - o->t->time >= o->time_to_eat)
 		{
@@ -145,7 +141,6 @@ void	change_state(t_one *o)
 			o->philo_status = 4;
 			o->t->time = get_time();
 			// printf("qui %d %lld\n", o->id + 1, get_time() - o->t->start);
-			o->time_last_meal = get_time();
 			// printf("philo %d, status %d\n", o->id, o->philo_status);
 		}
 		else if (o->philo_status == 4)
@@ -161,7 +156,7 @@ void	change_state(t_one *o)
 			ft_write(o->id, o->t, "is thinking");
 			o->philo_status = 0;
 		}
-		usleep(500);
+		//usleep(500);
 	}
 }
 
