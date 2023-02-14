@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aliburdi <aliburdi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 19:40:04 by ccolaiac          #+#    #+#             */
-/*   Updated: 2023/02/12 19:54:06 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/02/14 16:31:00 by aliburdi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_everyone
 {
 	int				fifth_argument;
 	int				num_philo;
+	int				*forchette;
 	long long		start;
 	time_t			time_to_die;
 	time_t			time_to_eat;
@@ -69,7 +70,8 @@ int			ft_atoi(const char *str);
 int			ft_isdigit(char *str);
 long long	get_time(void);
 long long	delta_time(long long time);
-void	change_state(t_one *o);
+void		change_state(t_one *o);
+void		forchette(t_everyone *t);
 void		*routine(void *one);
 void		init_fork(t_everyone *t);
 void		init_philo(t_everyone *t);

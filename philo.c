@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aliburdi <aliburdi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 19:40:04 by ccolaiac          #+#    #+#             */
-/*   Updated: 2023/02/12 17:16:00 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/02/14 17:30:09 by aliburdi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,19 @@ void	init_one(t_everyone *everyone)
 	}
 }
 
-long long	delta_time(long long time)
+void	forchette(t_everyone *t)
 {
-	if (time > 0)
-		return (get_time() - time);
-	return (0);
+	int	i;
+
+	i = 0;
+	t->forchette = malloc(sizeof(int) * t->num_philo);
+	if (!t->forchette)
+		return ;
+	while (i < t->num_philo)
+	{
+		t->forchette[i] = 0;
+		i++;
+	}
 }
 
 long long	get_time(void)
@@ -82,5 +90,6 @@ int	main(int ac, char **av)
 		return (FALSE);
 	}
 	init_all(av, everyone);
+	forchette(everyone);
 	init_philo(everyone);
 }

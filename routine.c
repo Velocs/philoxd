@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aliburdi <aliburdi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 13:19:23 by aliburdi          #+#    #+#             */
-/*   Updated: 2023/02/12 21:30:31 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/02/14 18:07:29 by aliburdi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,10 @@ void	init_philo(t_everyone *t)
 	while (i < t->num_philo)
 	{
 		t->philo[i]->time_last_meal = get_time();
-		if (i % 2 == 0)
-			usleep(10000);
+		// if (i % 2 == 0)
+		// 	usleep(10000);
 		pthread_create(&t->philo[i]->thread, NULL, routine, (void *)t->philo[i]);
+		usleep(100000);
 		// ft_check_death(*t->philo);
 		i++;
 	}
@@ -118,25 +119,16 @@ void	change_state(t_one *o)
 			// printf("%d\n", o->philo_status);
 		if (o->philo_status == 0)
 		{
-			if (pthread_mutex_lock(&o->t->forks[o->id]) == 0)
+			if (o->t->forchette[o->id] == 0 && o->t->forchette[o->id + 1 % o->t->num_philo] == 0)
 			{
+				pthread_mutex_lock(&o->t->forks[o->id]);
+				o->t->forchette[o->id] = 1;
 				ft_write(o->id, o->t, "has taken a fork");
-				o->philo_status = 1;
-			}
-		}
-		else if(o->philo_status == 1)
-		{
-			if (pthread_mutex_lock(&o->t->forks[(o->id + 1) % o->t->num_philo]) == 0)
-			{
+				pthread_mutex_lock(&o->t->forks[o->id + 1 % o->t->num_philo]);
+				o->t->forchette[(o->id + 1) % o->t->num_philo] = 1;
 				ft_write(o->id, o->t, "has taken a fork");
-				o->t->time = get_time();
 				o->philo_status = 2;
-			}
-			else
-			{
-				printf("unlock\n");
-				pthread_mutex_unlock(&o->t->forks[o->id]);
-				o->philo_status = 0;
+				printf("philo %d, status %d\n", o->id, o->philo_status);
 			}
 		}
 		else if (o->philo_status == 2)
@@ -144,14 +136,17 @@ void	change_state(t_one *o)
 			ft_write(o->id, o->t, "is eating");
 			o->philo_status = 3;
 		}
-		if (o->philo_status == 3 && get_time() - o->t->time >= o->time_to_eat)
+		else if (o->philo_status == 3 && get_time() - o->t->time >= o->time_to_eat)
 		{
 			pthread_mutex_unlock(&o->t->forks[o->id]);
 			pthread_mutex_unlock(&o->t->forks[(o->id + 1) % o->t->num_philo]);
+			o->t->forchette[o->id] = 0;
+			o->t->forchette[(o->id + 1) % o->t->num_philo] = 0;
 			o->philo_status = 4;
 			o->t->time = get_time();
 			// printf("qui %d %lld\n", o->id + 1, get_time() - o->t->start);
 			o->time_last_meal = get_time();
+			// printf("philo %d, status %d\n", o->id, o->philo_status);
 		}
 		else if (o->philo_status == 4)
 		{
@@ -159,14 +154,14 @@ void	change_state(t_one *o)
 			o->philo_status = 5;
 			// usleep(o->t->time_to_sleep * 1000);
 		}
-		if (o->philo_status == 5 && get_time() - o->t->time >= o->time_to_sleep)
+		else if (o->philo_status == 5 && get_time() - o->t->time >= o->time_to_sleep)
 			o->philo_status = 6;
 		else if (o->philo_status == 6)
 		{
 			ft_write(o->id, o->t, "is thinking");
 			o->philo_status = 0;
 		}
-		usleep(100);
+		usleep(500);
 	}
 }
 
